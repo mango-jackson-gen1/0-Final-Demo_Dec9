@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Harmony of Self</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="start-overlay">
+        <h1 style="color:#333; margin-bottom: 10px; font-weight: 400; letter-spacing: 2px;">HARMONY</h1>
+        <p style="color:#888; margin-bottom: 30px; font-size: 0.9rem;">Headphones recommended</p>
+        <input type="text" id="username-input" placeholder="What is your name?" style="display: block; margin: 0 auto 20px auto; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; width: 220px; text-align: center; background: transparent; color: #333;">
+        <button id="start-btn">Enter</button>
+    </div>
+
+    <!-- SCENE 1: BLOBS -->
+    <div id="scene-blobs" class="scene active">
+        <div id="top-prompt">How much do the two "you"s overlap?</div>
+        <div id="touch-note">Integration</div>
+        
+        <div id="blob1" class="blob">
+            Who you believe you are<br><span style="font-size:0.8em; opacity:0.8">(your self-concept)</span>
+        </div>
+
+        <div id="blob2" class="blob">
+            Who you act like when no one's watching
+        </div>
+
+        <div id="next-step-container">
+            <button id="next-step-btn">If you are ready, here is the next step.</button>
+        </div>
+    </div>
+
+    <!-- SCENE 2: CHART -->
+    <div id="scene-chart" class="scene">
+        <h2 style="position: absolute; top: 5%; width: 100%; text-align: center; color: #555; font-weight: 400; letter-spacing: 2px;">The Architecture of Self</h2>
+        <div id="chart-container">
+            <canvas id="radar-canvas"></canvas>
+            <!-- Labels will be injected here by JS -->
+        </div>
+        <button id="save-chart-btn">Next</button>
+        <div id="date-display"></div>
+    </div>
+
+    <!-- SCENE 3: MEMORY SYNTHESIS (CHATBOT) -->
+    <div id="scene-reflection" class="scene">
+        <div class="reflection-layout">
+            <!-- Sidebar: Metrics List -->
+            <div class="sidebar">
+                <div id="metric-list">
+                    <!-- Metrics injected by JS -->
+                </div>
+            </div>
+
+            <!-- Main Content: Chat & Chart -->
+            <div class="main-content">
+                <!-- Chat Area -->
+                <div id="reflection-container" class="chat-mode">
+                    <h2>Memory Synthesis Engine</h2>
+                    
+                    <div id="chat-history">
+                        <!-- Messages go here -->
+                        <div class="message bot-message" id="initial-loading">Digesting your data...</div>
+                    </div>
+
+                    <div id="chat-input-area" style="display:none;">
+                        <textarea id="chat-input" placeholder="Type your reflection..." rows="1"></textarea>
+                        <button id="chat-send-btn">Send</button>
+                    </div>
+                </div>
+
+                <!-- Overlap Reference (Chart) -->
+                <div id="mini-chart-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>

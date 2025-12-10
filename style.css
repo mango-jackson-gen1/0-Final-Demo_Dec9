@@ -1,0 +1,464 @@
+/* --- 1. THE VIBE (CSS) --- */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #fdfbf7; /* Warm Vanilla */
+    font-family: 'Nunito', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    user-select: none;
+}
+
+/* --- SHARED UI --- */
+.scene {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    transition: opacity 1.5s ease;
+    opacity: 0;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.scene.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* --- SCENE 1: BLOBS --- */
+#start-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(253, 251, 247, 0.95);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    cursor: pointer;
+    transition: opacity 1s ease;
+}
+
+#start-btn {
+    padding: 15px 40px;
+    background: #2d3436;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+#start-btn:hover { transform: scale(1.05); background: #000; }
+
+#top-prompt {
+    position: absolute;
+    top: 15%;
+    left: 0; 
+    width: 100%;
+    text-align: center;
+    color: #888;
+    font-size: 1.3rem;
+    font-weight: 400;
+    pointer-events: none;
+    z-index: 5;
+    letter-spacing: 0.5px;
+}
+
+.blob {
+    position: absolute;
+    width: 45vmin; 
+    height: 45vmin;
+    border-radius: 50%;
+    cursor: grab;
+    mix-blend-mode: multiply; 
+    transition: transform 0.1s;
+    will-change: transform, left, top;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: rgba(255,255,255, 0.9);
+    font-weight: 700;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+.blob:active { cursor: grabbing; transform: scale(1.02); }
+
+#blob1 {
+    background: radial-gradient(circle at 30% 30%, #00f2ff, #0078ff);
+    opacity: 0.8;
+    /* Position: 5% from left edge, Centered Vertically */
+    left: 5%; 
+    top: calc(50% - 22.5vmin);
+    animation: float 8s ease-in-out infinite;
+}
+
+#blob2 {
+    background: radial-gradient(circle at 30% 30%, #ff00cc, #bd00ff);
+    opacity: 0.8;
+    /* Position: 5% from right edge (calculated from left), Centered Vertically */
+    left: calc(95% - 45vmin); 
+    top: calc(50% - 22.5vmin);
+    animation: float 9s ease-in-out infinite reverse;
+}
+
+#touch-note {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    background: rgba(255,255,255,0.9);
+    padding: 12px 24px;
+    border-radius: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    color: #666;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    transition: opacity 1s ease;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    white-space: nowrap;
+}
+
+#next-step-container {
+    position: fixed;
+    bottom: 30px;
+    left: 30px; /* Move to left */
+    width: auto; /* Auto width instead of full width */
+    display: flex;
+    justify-content: flex-start;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 2s ease;
+    z-index: 50;
+}
+
+#next-step-btn {
+    pointer-events: auto;
+    background: transparent;
+    border: 1px solid #ccc;
+    color: #888;
+    padding: 8px 20px; /* Smaller padding */
+    border-radius: 4px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem; /* Smaller font */
+    cursor: pointer;
+    transition: all 0.4s ease;
+}
+#next-step-btn:hover {
+    border-color: #555;
+    color: #333;
+    background: rgba(255,255,255,0.5);
+}
+
+/* --- SCENE 2: CHART --- */
+#chart-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+canvas#radar-canvas {
+    /* DEFAULT: absolute for Scene 2 (full screen) */
+    position: absolute;
+}
+/* SPECIFIC: When inside #mini-chart-container (Scene 3 sidebar), it should be relative */
+#mini-chart-container canvas#radar-canvas {
+    position: relative;
+    width: 100% !important; /* Force fit */
+    height: 100% !important;
+}
+
+.chart-label {
+    position: absolute;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #444;
+    width: 200px;
+    pointer-events: none; /* Let clicks pass to canvas */
+    transition: opacity 0.5s;
+}
+.chart-label strong {
+    display: block;
+    font-size: 0.95rem;
+    margin-bottom: 2px;
+    color: #222;
+}
+.chart-label span {
+    font-size: 0.75rem;
+    color: #777;
+    line-height: 1.2;
+    display: block;
+}
+
+/* Date Display */
+#date-display {
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    color: #aaa;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* Save Button for Chart */
+#save-chart-btn {
+    position: absolute;
+    bottom: 30px;
+    left: 30px; /* Move to left */
+    padding: 8px 20px; /* Smaller padding */
+    background: #2d3436;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.85rem; /* Smaller font */
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s;
+}
+.scene.active #save-chart-btn {
+    opacity: 1;
+    pointer-events: auto;
+}
+#save-chart-btn:hover {
+    background: #000;
+}
+
+@keyframes float {
+    0% { transform: translate(0px, 0px) scale(1); }
+    33% { transform: translate(10px, -20px) scale(1.02); }
+    66% { transform: translate(-10px, 10px) scale(0.98); }
+    100% { transform: translate(0px, 0px) scale(1); }
+}
+
+/* --- SCENE 3: REFLECTION --- */
+#scene-reflection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.reflection-layout {
+    display: flex;
+    width: 95%;
+    height: 90vh;
+    max-width: 1200px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 420px; /* WIDENED from 320px for one-line text */
+    background: #fcfcfc; /* Very subtle separation */
+    border-right: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    padding: 15px; /* REDUCED from 30px */
+    box-sizing: border-box;
+    overflow-y: auto;
+    flex-shrink: 0; /* FIX: Prevent sidebar from being squeezed */
+}
+
+/* Sidebar Dictionary Style */
+#metric-list {
+    flex-grow: 1;
+    font-size: 0.95rem; /* Slightly larger for readability */
+    color: #444;
+    line-height: 1.6;
+}
+.metric-item {
+    margin-bottom: 25px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #f5f5f5; /* Softer divider */
+}
+.metric-item:last-child { border-bottom: none; }
+
+.metric-item strong {
+    display: block;
+    color: #111;
+    font-weight: 700;
+    font-size: 1.2rem; 
+    margin-bottom: 6px;
+    font-family: 'Nunito', sans-serif;
+    letter-spacing: -0.5px;
+}
+.metric-meta {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #999;
+    letter-spacing: 1.2px;
+    margin-bottom: 8px;
+    display: block;
+    font-weight: 600;
+}
+.metric-def {
+    font-size: 1rem; /* Clear definition text */
+    color: #555;
+    line-height: 1.5;
+    font-family: 'Georgia', serif; /* Serif for the "Dictionary Definition" feel specifically */
+    font-style: italic;
+}
+
+.main-content {
+    flex-grow: 1;
+    min-width: 0; /* FIX: Allow flex child to shrink properly if needed */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+    padding: 0; /* Remove padding from container, handle in children */
+    background: #fff;
+}
+
+#mini-chart-container {
+    width: 100%;
+    height: 350px; /* Slightly taller */
+    border-top: 1px solid #f0f0f0;
+    margin: 0; /* Remove margin */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fdfbf7; /* Slight contrast for the chart area (Warm Vanilla) to link back to intro */
+    border-radius: 0;
+    position: relative; /* Crucial for labels */
+}
+
+/* Chat Area */
+#reflection-container.chat-mode {
+    flex-grow: 1;
+    height: auto; /* Flex grow handles height */
+    display: flex;
+    flex-direction: column;
+    padding: 0; 
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+#reflection-container h2 {
+    margin: 15px 40px 5px 40px; /* REDUCED top margin by half */
+    font-size: 1.5rem;
+    color: #222;
+    font-weight: 300; /* Lighter weight for "Harmony" feel */
+    letter-spacing: 1px;
+}
+
+#chat-history {
+    flex-grow: 1;
+    width: 100%;
+    padding: 10px 20px; /* REDUCED from 20px 40px */
+    box-sizing: border-box;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: #fff;
+    border-top: none;
+    border-bottom: 1px solid #f9f9f9;
+}
+
+.message {
+    max-width: 80%;
+    padding: 6px 9px; /* REDUCED from 12px 18px */
+    border-radius: 12px;
+    font-size: 1rem;
+    line-height: 1.5;
+    animation: fadeIn 0.3s ease;
+    align-self: flex-start; /* LEFT ALIGN ALL MESSAGES based on user request */
+    text-align: left;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.bot-message {
+    background: #f4f6f8;
+    color: #222;
+}
+
+.user-message {
+    align-self: flex-end;
+    background: #eef5ff; 
+    color: #222;         
+    border: 1px solid #dae8fc;
+}
+
+#chat-input-area {
+    width: 100%;
+    padding: 15px 20px; /* REDUCED from 30px 40px */
+    box-sizing: border-box;
+    background: white;
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+}
+
+#chat-input {
+    flex-grow: 1;
+    padding: 15px 20px;
+    border: 1px solid #eee;
+    background: #fafafa;
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.05rem;
+    outline: none;
+    resize: none;
+    height: 60px; /* Taller input for comfort */
+    transition: all 0.3s ease;
+    color: #333;
+}
+#chat-input:focus {
+    background: #fff;
+    border-color: #ddd;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+#chat-send-btn {
+    background: #111;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    width: auto;
+    padding: 0 25px;
+    height: 60px; /* Match input height */
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, background 0.2s;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+#chat-send-btn:hover { 
+    background: #000; 
+    transform: translateY(-2px);
+}
+
