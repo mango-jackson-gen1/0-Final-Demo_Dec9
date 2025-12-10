@@ -74,7 +74,7 @@ export const saveToBackend = async (collectionName, data) => {
 // 1. Get the persistent "Patient File" Summary
 export const getSummary = async () => {
     if (!currentUser) return null;
-    const { get, child } = await import("firebase/database");
+    const { get, child } = await import("https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js");
     
     try {
         const dbRef = ref(db);
